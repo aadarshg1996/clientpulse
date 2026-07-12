@@ -4,138 +4,160 @@
 <meta charset="utf-8">
 <title>ClientPulse — Architecture</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root{
-    --bg:#0b0f14; --panel:#111823; --ink:#e7edf5; --muted:#8ea0b5;
-    --line:#2b3a4d; --client:#3b82f6; --render:#8b5cf6; --openai:#10a37f;
-    --data:#f59e0b; --chip:#1a2433;
-  }
-  body{
-    background:radial-gradient(1200px 700px at 70% -10%, #16202e 0%, var(--bg) 60%);
-    color:var(--ink); font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
-    padding:40px 48px; width:1400px;
-  }
-  h1{ font-size:26px; letter-spacing:-.02em; }
-  h1 span{ color:var(--muted); font-weight:500; font-size:16px; }
-  .sub{ color:var(--muted); margin:6px 0 28px; font-size:14px; }
-  .legend{ display:flex; gap:18px; margin-bottom:26px; flex-wrap:wrap; }
-  .legend b{ display:inline-flex; align-items:center; gap:7px; color:var(--muted); font-weight:500; }
-  .dot{ width:11px; height:11px; border-radius:3px; display:inline-block; }
-  .row{ display:flex; gap:26px; align-items:stretch; margin-bottom:26px; }
-  .group{ border:1px solid var(--line); border-radius:16px; padding:18px; background:rgba(17,24,35,.6); position:relative; flex:1; }
-  .group > .tag{
-    position:absolute; top:-11px; left:16px; font-size:11px; font-weight:700; letter-spacing:.08em;
-    text-transform:uppercase; padding:2px 10px; border-radius:20px; background:var(--bg);
-  }
-  .card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; margin-top:12px; }
-  .card:first-of-type{ margin-top:6px; }
-  .card h3{ font-size:15px; display:flex; align-items:center; gap:8px; }
-  .card p{ color:var(--muted); font-size:12.5px; margin-top:5px; }
-  .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-  .chip{ background:var(--chip); border:1px solid var(--line); color:#b9c7d8; font-size:11px; padding:3px 9px; border-radius:20px; }
-  .url{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px; color:#7fd1b9; margin-top:8px; }
-  .flowlbl{ display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12px; position:relative; }
-  .arrow{ text-align:center; color:var(--line); font-size:22px; margin:-6px 0; }
-  .split{ display:flex; gap:16px; }
-  .split .card{ flex:1; }
-  .foot{ color:var(--muted); font-size:12px; margin-top:22px; border-top:1px solid var(--line); padding-top:14px; display:flex; gap:26px; flex-wrap:wrap; }
-  .foot b{ color:var(--ink); font-weight:600; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0b0f14;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif}
+  svg{display:block}
+  .title{fill:#e7edf5;font-size:28px;font-weight:700;letter-spacing:-.5px}
+  .subtitle{fill:#8ea0b5;font-size:15px}
+  .boundary-lbl{font-size:12.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+  .n-title{fill:#e7edf5;font-size:17px;font-weight:600}
+  .n-sub{fill:#93a3b8;font-size:12.5px}
+  .n-tech{fill:#6f8299;font-size:11.5px}
+  .chip{fill:#7fd1b9;font-size:11.5px;font-family:ui-monospace,Menlo,monospace}
+  .edge{stroke:#7f93ab;stroke-width:2;fill:none}
+  .edge-lbl{fill:#c6d3e2;font-size:12.5px;font-weight:500}
+  .edge-lbl-bg{fill:#0b0f14}
+  .legend-lbl{fill:#8ea0b5;font-size:13px}
 </style>
 </head>
 <body>
-  <h1>ClientPulse&nbsp;AI <span>— deployed architecture</span></h1>
-  <p class="sub">Agentic contract-risk, project-health &amp; renewal advisor. Hosted on Render; grounded analysis &amp; chat via OpenAI Agents SDK + File Search.</p>
+<svg width="1480" height="900" viewBox="0 0 1480 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arw" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L9,4 L0,8 Z" fill="#7f93ab"/>
+    </marker>
+    <marker id="arwG" markerWidth="12" markerHeight="12" refX="8" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L9,4 L0,8 Z" fill="#c08a2e"/>
+    </marker>
+  </defs>
 
-  <div class="legend">
-    <b><i class="dot" style="background:var(--client)"></i>Client</b>
-    <b><i class="dot" style="background:var(--render)"></i>Render (hosting)</b>
-    <b><i class="dot" style="background:var(--openai)"></i>OpenAI</b>
-    <b><i class="dot" style="background:var(--data)"></i>Offline pipeline</b>
-  </div>
+  <!-- header -->
+  <text class="title" x="48" y="52">ClientPulse AI — deployed architecture</text>
+  <text class="subtitle" x="48" y="78">Agentic contract-risk, project-health &amp; renewal advisor</text>
 
-  <!-- Client -->
-  <div class="group" style="border-color:#24405f">
-    <span class="tag" style="color:var(--client)">Client</span>
-    <div class="card">
-      <h3><i class="dot" style="background:var(--client)"></i>Browser — Manager / PMO</h3>
-      <p>Portfolio dashboard, risk queue, account detail, grounded chat.</p>
-    </div>
-  </div>
-  <div class="arrow">▼ &nbsp;HTTPS</div>
+  <!-- legend -->
+  <g transform="translate(1090,40)">
+    <rect x="0" y="0" width="13" height="13" rx="3" fill="#3b82f6"/><text class="legend-lbl" x="20" y="11">Client</text>
+    <rect x="0" y="22" width="13" height="13" rx="3" fill="#8b5cf6"/><text class="legend-lbl" x="20" y="33">Render</text>
+    <rect x="200" y="0" width="13" height="13" rx="3" fill="#10a37f"/><text class="legend-lbl" x="220" y="11">OpenAI</text>
+    <rect x="200" y="22" width="13" height="13" rx="3" fill="#f59e0b"/><text class="legend-lbl" x="220" y="33">Offline job</text>
+  </g>
 
-  <!-- Render row -->
-  <div class="row">
-    <div class="group" style="border-color:#3b2f63">
-      <span class="tag" style="color:var(--render)">Render · Static Site</span>
-      <div class="card">
-        <h3><i class="dot" style="background:var(--render)"></i>Frontend — clientpulse-web</h3>
-        <p>SPA served over Render's global CDN. Backend URL inlined at build time.</p>
-        <div class="chips"><span class="chip">React</span><span class="chip">Vite</span><span class="chip">TypeScript</span><span class="chip">Tailwind</span><span class="chip">shadcn/ui</span></div>
-        <div class="url">clientpulse-web-4t8u.onrender.com</div>
-      </div>
-    </div>
-    <div class="flowlbl" style="flex:0 0 120px; flex-direction:column; gap:2px;">
-      <div style="font-size:20px;color:var(--line)">▶</div>
-      <div>REST / JSON</div>
-      <div style="font-size:11px">CORS-scoped</div>
-    </div>
-    <div class="group" style="border-color:#3b2f63">
-      <span class="tag" style="color:var(--render)">Render · Web Service</span>
-      <div class="card">
-        <h3><i class="dot" style="background:var(--render)"></i>Backend — clientpulse-api (FastAPI · uv)</h3>
-        <p>Read API + agent endpoints. On deploy, an idempotent bootstrap applies the schema &amp; seeds base data.</p>
-        <div class="chips"><span class="chip">FastAPI</span><span class="chip">SQLAlchemy</span><span class="chip">Uvicorn</span><span class="chip">Python 3.13</span></div>
-        <div class="url">clientpulse-api-vh7g.onrender.com</div>
-      </div>
-    </div>
-  </div>
+  <!-- ===== deployment boundaries (drawn behind nodes) ===== -->
+  <g>
+    <rect x="70" y="150" width="820" height="470" rx="18" fill="#8b5cf60d" stroke="#5b4b8a" stroke-width="1.5" stroke-dasharray="7 6"/>
+    <text class="boundary-lbl" x="92" y="176" fill="#a78bfa">Render · cloud (Oregon)</text>
 
-  <div class="row">
-    <!-- Postgres -->
-    <div class="group" style="border-color:#3b2f63; flex:1.15">
-      <span class="tag" style="color:var(--render)">Render · Postgres</span>
-      <div class="card">
-        <h3><i class="dot" style="background:var(--render)"></i>Database — clientpulse-db</h3>
-        <p>Declarative schema (Ariga Atlas / schema.sql).</p>
-        <div class="chips">
-          <span class="chip">accounts</span><span class="chip">health_scores</span><span class="chip">signals</span>
-          <span class="chip">actions</span><span class="chip">sla_metrics</span><span class="chip">documents</span><span class="chip">analysis_runs</span>
-        </div>
-      </div>
-    </div>
-    <div class="flowlbl" style="flex:0 0 120px;">◀&nbsp; SQL</div>
-    <!-- OpenAI -->
-    <div class="group" style="border-color:#134e40; flex:1.55">
-      <span class="tag" style="color:var(--openai)">OpenAI</span>
-      <div class="split">
-        <div class="card">
-          <h3><i class="dot" style="background:var(--openai)"></i>Agents SDK</h3>
-          <p>Analyst + specialist agents, judge &amp; guardrails. Responses API (gpt-5-mini).</p>
-        </div>
-        <div class="card">
-          <h3><i class="dot" style="background:var(--openai)"></i>File Search</h3>
-          <p>Vector store over each account's docs — grounds signals &amp; chat with citations.</p>
-        </div>
-      </div>
-      <p style="color:var(--muted); font-size:12px; margin-top:12px;">Backend calls agents for live <b style="color:var(--ink)">chat</b>; signals cite retrieved evidence.</p>
-    </div>
-  </div>
+    <rect x="930" y="182" width="500" height="300" rx="18" fill="#10a37f0d" stroke="#186a55" stroke-width="1.5" stroke-dasharray="7 6"/>
+    <text class="boundary-lbl" x="952" y="208" fill="#34d399">OpenAI</text>
 
-  <!-- Offline pipeline -->
-  <div class="group" style="border-color:#7a5a15; margin-top:4px;">
-    <span class="tag" style="color:var(--data)">Offline · one-time populate (src.populate)</span>
-    <div class="split">
-      <div class="card"><h3><i class="dot" style="background:var(--data)"></i>1 · Generate docs</h3><p>Synthetic MSA / SOW / SLA / QBR per account (PyMuPDF, python-docx).</p></div>
-      <div class="card"><h3><i class="dot" style="background:var(--data)"></i>2 · Ingest + analyze</h3><p>Upload to vector store; agent writes health scores, signals, actions.</p></div>
-      <div class="card"><h3><i class="dot" style="background:var(--data)"></i>3 · Backfill trend</h3><p>Historical weekly health snapshots for the trend chart.</p></div>
-    </div>
-    <p style="color:var(--muted); font-size:12px; margin-top:12px;">Run once from a workstation against the DB → fills the agent-derived layer the live app then serves.</p>
-  </div>
+    <rect x="70" y="680" width="1360" height="180" rx="18" fill="#f59e0b0d" stroke="#8a6a25" stroke-width="1.5" stroke-dasharray="7 6"/>
+    <text class="boundary-lbl" x="92" y="706" fill="#fbbf24">Offline · one-time populate  (make populate → src.populate)</text>
+  </g>
 
-  <div class="foot">
-    <span><b>Live:</b> clientpulse-web-4t8u.onrender.com</span>
-    <span><b>Hosting:</b> Render (static + web service + Postgres, Oregon)</span>
-    <span><b>AI:</b> OpenAI Agents SDK · File Search · gpt-5-mini</span>
-  </div>
+  <!-- ===== edges (arrows) ===== -->
+  <!-- user -> web -->
+  <path class="edge" d="M710,132 C560,150 360,168 262,214" marker-end="url(#arw)"/>
+  <!-- web -> api -->
+  <path class="edge" d="M430,300 L516,300" marker-end="url(#arw)"/>
+  <!-- api -> db -->
+  <path class="edge" d="M650,362 C650,420 500,430 470,486" marker-end="url(#arw)"/>
+  <!-- api -> agents -->
+  <path class="edge" d="M810,290 C880,300 900,285 962,282" marker-end="url(#arw)"/>
+  <!-- agents -> vector store -->
+  <path class="edge" d="M1180,330 L1180,372" marker-end="url(#arw)"/>
+  <!-- populate -> db (dashed) -->
+  <path d="M360,724 C360,660 430,650 456,606" fill="none" stroke="#c08a2e" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arwG)"/>
+  <!-- populate -> vector store (dashed) -->
+  <path d="M1180,724 L1180,474" fill="none" stroke="#c08a2e" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arwG)"/>
+
+  <!-- edge labels -->
+  <g text-anchor="middle">
+    <rect class="edge-lbl-bg" x="455" y="152" width="58" height="18"/><text class="edge-lbl" x="484" y="165">HTTPS</text>
+    <rect class="edge-lbl-bg" x="435" y="278" width="78" height="18"/><text class="edge-lbl" x="474" y="291">REST / JSON</text>
+    <rect class="edge-lbl-bg" x="600" y="418" width="34" height="18"/><text class="edge-lbl" x="617" y="431">SQL</text>
+    <rect class="edge-lbl-bg" x="842" y="256" width="104" height="18"/><text class="edge-lbl" x="894" y="269">chat / analyze</text>
+    <rect class="edge-lbl-bg" x="1188" y="342" width="96" height="18" /><text class="edge-lbl" x="1236" y="355" text-anchor="start">vector search</text>
+    <rect class="edge-lbl-bg" x="300" y="662" width="80" height="18"/><text class="edge-lbl" x="340" y="675">write rows</text>
+    <rect class="edge-lbl-bg" x="1188" y="560" width="98" height="18"/><text class="edge-lbl" x="1237" y="573" text-anchor="start">upload docs</text>
+  </g>
+
+  <!-- ===== nodes ===== -->
+  <!-- user -->
+  <g>
+    <rect x="560" y="70" width="330" height="64" rx="12" fill="#111823" stroke="#3b82f6" stroke-width="1.6"/>
+    <circle cx="588" cy="102" r="7" fill="#3b82f6"/>
+    <text class="n-title" x="608" y="98">Manager / PMO</text>
+    <text class="n-sub" x="608" y="118">Browser — dashboard · risk queue · chat</text>
+  </g>
+
+  <!-- frontend -->
+  <g>
+    <rect x="110" y="230" width="320" height="140" rx="12" fill="#111823" stroke="#8b5cf6" stroke-width="1.6"/>
+    <circle cx="136" cy="262" r="7" fill="#8b5cf6"/>
+    <text class="n-title" x="156" y="258">Frontend — Static Site</text>
+    <text class="n-sub" x="130" y="286">React · Vite · TS · Tailwind · shadcn/ui</text>
+    <text class="n-sub" x="130" y="306">SPA on Render's global CDN;</text>
+    <text class="n-sub" x="130" y="324">API URL inlined at build time.</text>
+    <text class="chip" x="130" y="352">clientpulse-web-4t8u.onrender.com</text>
+  </g>
+
+  <!-- backend -->
+  <g>
+    <rect x="516" y="230" width="320" height="140" rx="12" fill="#111823" stroke="#8b5cf6" stroke-width="1.6"/>
+    <circle cx="542" cy="262" r="7" fill="#8b5cf6"/>
+    <text class="n-title" x="562" y="258">Backend — Web Service</text>
+    <text class="n-sub" x="536" y="286">FastAPI · SQLAlchemy · uv · Python 3.13</text>
+    <text class="n-sub" x="536" y="306">Read API + agent endpoints; deploy-time</text>
+    <text class="n-sub" x="536" y="324">bootstrap applies schema &amp; seeds data.</text>
+    <text class="chip" x="536" y="352">clientpulse-api-vh7g.onrender.com</text>
+  </g>
+
+  <!-- database -->
+  <g>
+    <rect x="320" y="486" width="300" height="120" rx="12" fill="#111823" stroke="#8b5cf6" stroke-width="1.6"/>
+    <path d="M346 512 a12 5 0 0 0 24 0 a12 5 0 0 0 -24 0 M346 512 v10 a12 5 0 0 0 24 0 v-10" fill="none" stroke="#8b5cf6" stroke-width="1.6"/>
+    <text class="n-title" x="384" y="514">Postgres — clientpulse-db</text>
+    <text class="n-sub" x="340" y="542">Declarative schema (Atlas / schema.sql)</text>
+    <text class="chip" x="340" y="568" style="fill:#93a3b8;font-family:inherit">accounts · health_scores · signals</text>
+    <text class="chip" x="340" y="588" style="fill:#93a3b8;font-family:inherit">actions · sla_metrics · documents</text>
+  </g>
+
+  <!-- agents -->
+  <g>
+    <rect x="962" y="238" width="416" height="92" rx="12" fill="#111823" stroke="#10a37f" stroke-width="1.6"/>
+    <circle cx="988" cy="270" r="7" fill="#10a37f"/>
+    <text class="n-title" x="1008" y="266">Agents SDK</text>
+    <text class="n-sub" x="982" y="294">Analyst + specialist agents · judge · guardrails</text>
+    <text class="n-sub" x="982" y="314">Responses API · gpt-5-mini</text>
+  </g>
+
+  <!-- vector store -->
+  <g>
+    <rect x="962" y="372" width="416" height="92" rx="12" fill="#111823" stroke="#10a37f" stroke-width="1.6"/>
+    <circle cx="988" cy="404" r="7" fill="#10a37f"/>
+    <text class="n-title" x="1008" y="400">File Search — vector store</text>
+    <text class="n-sub" x="982" y="428">Per-account documents; grounds signals</text>
+    <text class="n-sub" x="982" y="448">&amp; chat answers with citations.</text>
+  </g>
+
+  <!-- populate steps -->
+  <g>
+    <rect x="100" y="726" width="410" height="104" rx="10" fill="#15110a" stroke="#8a6a25" stroke-width="1.4"/>
+    <text class="n-title" x="122" y="756" style="font-size:15px">1 · Generate documents</text>
+    <text class="n-sub" x="122" y="780">Synthetic MSA / SOW / SLA / QBR per</text>
+    <text class="n-sub" x="122" y="798">account (PyMuPDF · python-docx).</text>
+
+    <rect x="535" y="726" width="410" height="104" rx="10" fill="#15110a" stroke="#8a6a25" stroke-width="1.4"/>
+    <text class="n-title" x="557" y="756" style="font-size:15px">2 · Ingest + analyze</text>
+    <text class="n-sub" x="557" y="780">Upload to vector store; agent writes</text>
+    <text class="n-sub" x="557" y="798">health scores, signals, actions.</text>
+
+    <rect x="970" y="726" width="410" height="104" rx="10" fill="#15110a" stroke="#8a6a25" stroke-width="1.4"/>
+    <text class="n-title" x="992" y="756" style="font-size:15px">3 · Backfill trend</text>
+    <text class="n-sub" x="992" y="780">Historical weekly health snapshots</text>
+    <text class="n-sub" x="992" y="798">for the trend chart.</text>
+  </g>
+</svg>
 </body>
 </html>
