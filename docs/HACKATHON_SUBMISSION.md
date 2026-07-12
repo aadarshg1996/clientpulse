@@ -131,15 +131,20 @@ Record a <5 min walkthrough (upload → analysis → portfolio → drawer → ac
 
 ## Access Instructions
 
-> Live prototype:
-> - **Frontend:** `cd frontend && npm install && npm run dev` → open `http://localhost:5173`.
-> - **Backend:** needs local Postgres; see `backend/README.md`. `make db-apply && make seed && make seed-docs`.
-> - Seeded demo data included — no login required (auth is stubbed for MVP).
+**Live and hosted — no setup, no login, no credentials.** Pre-loaded with 30 demo client accounts, fully analyzed by the agent.
 
-Adjust to actual deploy.
+1. Open **https://clientpulse-web-4t8u.onrender.com** in any browser.
+2. **Portfolio** view loads: 30 accounts with AI health scores, risk status (healthy / watch / risk / critical), SLA attainment, ARR at risk, and a health-trend chart.
+3. Open the **Risk Queue** to see accounts ranked by risk, each with agent-generated signals and a recommended action plan.
+4. Click any account for its **detail** view: contract facts, evidence-cited signals, health trend, and recommended actions.
+5. Inside an account, use the **Chat** box to ask grounded questions (e.g. *"What are the main risks for this account?"*). Answers cite the account's own documents (MSA, SOW, SLA schedule, QBR notes) via OpenAI File Search.
+
+> Hosted on Render (frontend static site · FastAPI backend · Postgres). The backend uses Render's free tier, so the **first** request after a period of inactivity may take ~30–60s to wake (cold start); subsequent requests are fast.
 
 ---
 
 ## Live Agent Link
 
-> _[paste hosted URL if deployed — e.g. Vercel frontend + hosted backend. Else: "Local prototype — see Access Instructions."]_
+**https://clientpulse-web-4t8u.onrender.com**
+
+Backend API: `https://clientpulse-api-vh7g.onrender.com` (e.g. `GET /accounts`, `GET /risks`).
