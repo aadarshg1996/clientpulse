@@ -1,4 +1,4 @@
-.PHONY: install-deps create-db db-diff db-apply seed seed-docs reseed api test help
+.PHONY: install-deps create-db db-diff db-apply seed seed-docs reseed api test help populate
 
 # Load .env so DATABASE_URL / POSTGRES_* are available to db targets.
 ifneq (,$(wildcard .env))
@@ -46,6 +46,12 @@ seed-docs:
 	uv run python -m src.seed_docs --accounts $(DOC_ACCOUNTS)
 
 reseed: db-apply seed
+
+POPULATE_ACCOUNTS ?= 30
+# One-time agent populate (docs -> ingest+analyze -> trend). Point DATABASE_URL
+# at the target (e.g. Render EXTERNAL url) and set OPENAI_API_KEY. Costs OpenAI.
+populate:
+	uv run python -m src.populate --accounts $(POPULATE_ACCOUNTS)
 
 api:
 	uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
