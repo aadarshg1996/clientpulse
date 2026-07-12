@@ -1,12 +1,13 @@
 # ClientPulse — 5-minute demo script
 
 ## Pre-demo checklist
-- [ ] Backend up: `cd backend && make api` (Postgres running, `.env` has `OPENAI_API_KEY`)
-- [ ] Frontend up: `cd frontend && npm run dev`
-- [ ] All 30 accounts analyzed (multi-agent + actions + eval) — run the batch beforehand, never live
+- [ ] **Live app open:** https://clientpulse-web-4t8u.onrender.com (hosted on Render — no local setup)
+- [ ] **Warm the backend first** — hit the app ~1 min before demo so the free-tier backend is awake (cold start ~30–60s). Confirm the portfolio loads with data.
+- [ ] All 30 accounts already analyzed (multi-agent + actions + eval) — done, live in the DB. Never run analysis live on stage.
 - [ ] One **real** contract PDF on the desktop for the upload demo
 - [ ] OpenAI Traces tab open (platform.openai.com/traces) to show specialist sub-spans
-- [ ] Do NOT click Re-analyze on stage (15-90s + nondeterministic) — use pre-baked data
+- [ ] Do NOT click Re-analyze on stage (15-90s + nondeterministic) — use the pre-baked data
+- [ ] Backup: if the network/site is flaky, run locally (`cd backend && make api` + `cd frontend && npm run dev`)
 
 ## The flow (≈5 min)
 
