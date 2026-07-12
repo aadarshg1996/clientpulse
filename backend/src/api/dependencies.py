@@ -1,0 +1,15 @@
+"""FastAPI dependencies."""
+
+from collections.abc import Generator
+
+from sqlalchemy.orm import Session
+
+from ..db.session import get_session_factory
+
+
+def get_db() -> Generator[Session, None, None]:
+    session = get_session_factory()()
+    try:
+        yield session
+    finally:
+        session.close()

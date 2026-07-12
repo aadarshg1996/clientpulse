@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.625rem;
+
+  --background: oklch(0.985 0.002 247);
+  --foreground: oklch(0.21 0.02 257);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.21 0.02 257);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.21 0.02 257);
+
+  /* indigo accent (matches the design) */
+  --primary: oklch(0.585 0.205 277);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.955 0.005 247);
+  --secondary-foreground: oklch(0.21 0.02 257);
+  --muted: oklch(0.955 0.005 247);
+  --muted-foreground: oklch(0.5 0.02 257);
+  --accent: oklch(0.955 0.005 247);
+  --accent-foreground: oklch(0.21 0.02 257);
+  --destructive: oklch(0.577 0.225 27);
+
+  --border: oklch(0.922 0.004 247);
+  --input: oklch(0.922 0.004 247);
+  --ring: oklch(0.585 0.205 277);
+
+  /* domain status tokens */
+  --healthy: oklch(0.62 0.13 162);
+  --healthy-soft: rgba(14, 159, 110, 0.12);
+  --watch: oklch(0.64 0.13 70);
+  --watch-soft: rgba(199, 127, 10, 0.14);
+  --risk: oklch(0.63 0.18 45);
+  --risk-soft: rgba(226, 89, 12, 0.13);
+  --critical: oklch(0.6 0.2 16);
+  --critical-soft: rgba(220, 47, 74, 0.12);
+
+  --chart-1: var(--primary);
+  --chart-2: var(--healthy);
+  --chart-3: var(--watch);
+  --chart-4: var(--risk);
+  --chart-5: var(--critical);
+}
+
+.dark {
+  --background: oklch(0.16 0.012 257);
+  --foreground: oklch(0.95 0.01 247);
+  --card: oklch(0.2 0.015 257);
+  --card-foreground: oklch(0.95 0.01 247);
+  --popover: oklch(0.2 0.015 257);
+  --popover-foreground: oklch(0.95 0.01 247);
+
+  --primary: oklch(0.68 0.16 277);
+  --primary-foreground: oklch(0.16 0.012 257);
+  --secondary: oklch(0.26 0.015 257);
+  --secondary-foreground: oklch(0.95 0.01 247);
+  --muted: oklch(0.26 0.015 257);
+  --muted-foreground: oklch(0.65 0.02 257);
+  --accent: oklch(0.26 0.015 257);
+  --accent-foreground: oklch(0.95 0.01 247);
+  --destructive: oklch(0.7 0.19 22);
+
+  --border: oklch(0.3 0.015 257);
+  --input: oklch(0.3 0.015 257);
+  --ring: oklch(0.68 0.16 277);
+
+  --healthy: oklch(0.78 0.15 162);
+  --healthy-soft: rgba(52, 211, 153, 0.14);
+  --watch: oklch(0.82 0.15 75);
+  --watch-soft: rgba(251, 191, 36, 0.15);
+  --risk: oklch(0.74 0.16 50);
+  --risk-soft: rgba(251, 146, 60, 0.15);
+  --critical: oklch(0.7 0.17 12);
+  --critical-soft: rgba(251, 113, 133, 0.16);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-healthy: var(--healthy);
+  --color-healthy-soft: var(--healthy-soft);
+  --color-watch: var(--watch);
+  --color-watch-soft: var(--watch-soft);
+  --color-risk: var(--risk);
+  --color-risk-soft: var(--risk-soft);
+  --color-critical: var(--critical);
+  --color-critical-soft: var(--critical-soft);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+}

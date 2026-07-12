@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClientPulse AI Architecture Diagram</title>
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --ink: #132238;
+      --muted: #5d6b82;
+      --line: #cbd5e1;
+      --blue: #2563eb;
+      --blue2: #dbeafe;
+      --purple: #7c3aed;
+      --purple2: #ede9fe;
+      --green: #059669;
+      --green2: #d1fae5;
+      --amber: #d97706;
+      --amber2: #fef3c7;
+      --red: #dc2626;
+      --red2: #fee2e2;
+      --gray2: #eef2f7;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #eaf1ff 0%, var(--bg) 35%, #fff 100%);
+    }
+    .wrap {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+    .hero {
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.35), transparent 34%),
+                  radial-gradient(circle at bottom right, rgba(124, 58, 237, 0.25), transparent 34%),
+                  #0f172a;
+      color: white;
+      border-radius: 28px;
+      padding: 34px;
+      box-shadow: var(--shadow);
+    }
+    .hero h1 {
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.05;
+      margin: 0 0 12px;
+      letter-spacing: -1.4px;
+    }
+    .hero p {
+      margin: 0;
+      max-width: 980px;
+      color: rgba(255,255,255,0.82);
+      font-size: 18px;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+    .chip {
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.11);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .section {
+      margin-top: 28px;
+    }
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 14px;
+    }
+    h2 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -0.5px;
+    }
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .note {
+      color: var(--muted);
+      margin: 6px 0 0;
+      max-width: 900px;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+    .diagram-card {
+      padding: 16px;
+      overflow-x: auto;
+    }
+    svg {
+      width: 1360px;
+      height: 1030px;
+      display: block;
+    }
+    .box {
+      fill: #fff;
+      stroke: #cbd5e1;
+      stroke-width: 1.4;
+      rx: 18;
+      filter: drop-shadow(0 8px 14px rgba(15, 23, 42, 0.08));
+    }
+    .box-blue { fill: #eff6ff; stroke: #93c5fd; }
+    .box-purple { fill: #f5f3ff; stroke: #c4b5fd; }
+    .box-green { fill: #ecfdf5; stroke: #86efac; }
+    .box-amber { fill: #fffbeb; stroke: #fcd34d; }
+    .box-red { fill: #fef2f2; stroke: #fca5a5; }
+    .box-dark { fill: #0f172a; stroke: #334155; }
+    .box-gray { fill: #f8fafc; stroke: #cbd5e1; }
+    .txt-title {
+      font-size: 17px;
+      font-weight: 850;
+      fill: #132238;
+    }
+    .txt-small {
+      font-size: 12.5px;
+      fill: #475569;
+    }
+    .txt-white { fill: white; }
+    .layer-label {
+      font-size: 13px;
+      font-weight: 900;
+      fill: #334155;
+      letter-spacing: 0.06em;
+    }
+    .pill-svg {
+      fill: #dbeafe;
+      stroke: #93c5fd;
+      stroke-width: 1;
+    }
+    .arrow {
+      stroke: #64748b;
+      stroke-width: 2;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+    .arrow-blue {
+      stroke: #2563eb;
+      stroke-width: 2.3;
+      fill: none;
+      marker-end: url(#arrowhead-blue);
+    }
+    .arrow-dash {
+      stroke: #94a3b8;
+      stroke-width: 2;
+      stroke-dasharray: 6 6;
+      fill: none;
+      marker-end: url(#arrowhead-gray);
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 850;
+      font-size: 12px;
+      border: 1px solid transparent;
+    }
+    .pill.blue { background: var(--blue2); color: var(--blue); border-color: #93c5fd; }
+    .pill.purple { background: var(--purple2); color: var(--purple); border-color: #c4b5fd; }
+    .pill.green { background: var(--green2); color: var(--green); border-color: #86efac; }
+    .pill.amber { background: var(--amber2); color: var(--amber); border-color: #fcd34d; }
+    .pill.red { background: var(--red2); color: var(--red); border-color: #fca5a5; }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      font-size: 14px;
+      background: #fff;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      background: #f8fafc;
+      color: #334155;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:last-child td { border-bottom: none; }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+    li { margin: 7px 0; }
+    .callout {
+      border: 1px solid #93c5fd;
+      background: #eff6ff;
+      border-radius: 18px;
+      padding: 18px;
+      color: #1e3a8a;
+    }
+    .footer {
+      margin-top: 28px;
+      background: #0f172a;
+      color: rgba(255,255,255,0.84);
+      border-radius: 22px;
+      padding: 22px;
+    }
+    .footer strong { color: white; }
+    @media (max-width: 900px) {
+      .wrap { padding: 14px; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .title-row { align-items: start; flex-direction: column; }
+    }
+    @media print {
+      body { background: white; }
+      .wrap { max-width: none; padding: 0; }
+      .card, .hero { box-shadow: none; }
+      .diagram-card { overflow: visible; }
+      svg { width: 100%; height: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>ClientPulse AI Architecture</h1>
+      <p>
+        2026-ready architecture for an agentic contract risk, project health, renewal risk, and recommended action advisor for HCLTech managers.
+      </p>
+      <div class="chips">
+        <span class="chip">Upload-first MVP</span>
+        <span class="chip">OpenAI Agents SDK</span>
+        <span class="chip">Responses API</span>
+        <span class="chip">File Search RAG</span>
+        <span class="chip">Function Calling</span>
+        <span class="chip">Human Review</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="title-row">
+        <div>
+          <h2>Architecture Diagram With Tech Stack</h2>
+          <p class="note">
+            This diagram is designed for your hackathon proposal. It shows the realistic MVP stack and the future enterprise stack without assuming Jira or ServiceNow will always be available.
+          </p>
+        </div>
+        <span class="pill blue">Recommended 2026 Design</span>
+      </div>
+
+      <div class="card diagram-card">
+        <svg viewBox="0 0 1360 1030" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClientPulse AI architecture diagram">
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+              <path d="M0,0 L10,4 L0,8 Z" fill="#64748b" />
+            </marker>
+            <marker id="arrowhead-blue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+              <path d="M0,0 L10,4 L0,8 Z" fill="#2563eb" />
+            </marker>
+            <marker id="arrowhead-gray" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+              <path d="M0,0 L10,4 L0,8 Z" fill="#94a3b8" />
+            </marker>
+          </defs>
+
+          <!-- Layer labels -->
+          <text x="30" y="40" class="layer-label">USER AND CHANNEL LAYER</text>
+          <text x="30" y="180" class="layer-label">INPUT AND DATA SOURCE LAYER</text>
+          <text x="30" y="350" class="layer-label">INGESTION, SECURITY AND KNOWLEDGE LAYER</text>
+          <text x="30" y="535" class="layer-label">OPENAI AGENTIC INTELLIGENCE LAYER</text>
+          <text x="30" y="770" class="layer-label">OUTPUT, REVIEW AND ACTION LAYER</text>
+          <text x="30" y="930" class="layer-label">GOVERNANCE AND ENTERPRISE SCALE LAYER</text>
+
+          <!-- user layer -->
+          <rect x="30" y="60" width="230" height="86" class="box box-blue"/>
+          <text x="52" y="92" class="txt-title">Manager / Supervisor</text>
+          <text x="52" y="116" class="txt-small">Delivery manager, account manager,</text>
+          <text x="52" y="134" class="txt-small">client partner, PMO, commercial lead</text>
+
+          <rect x="300" y="60" width="250" height="86" class="box box-purple"/>
+          <text x="322" y="92" class="txt-title">Custom Web App</text>
+          <text x="322" y="116" class="txt-small">Streamlit for MVP or React + ChatKit</text>
+          <text x="322" y="134" class="txt-small">for a polished enterprise UI</text>
+
+          <rect x="590" y="60" width="250" height="86" class="box box-purple"/>
+          <text x="612" y="92" class="txt-title">ChatGPT Enterprise Option</text>
+          <text x="612" y="116" class="txt-small">Workspace Agent for repeatable tasks,</text>
+          <text x="612" y="134" class="txt-small">Slack execution, schedules, API triggers</text>
+
+          <rect x="880" y="60" width="210" height="86" class="box box-gray"/>
+          <text x="902" y="92" class="txt-title">SSO and RBAC</text>
+          <text x="902" y="116" class="txt-small">HCL identity, workspace roles,</text>
+          <text x="902" y="134" class="txt-small">permission-aware access</text>
+
+          <rect x="1130" y="60" width="200" height="86" class="box box-green"/>
+          <text x="1152" y="92" class="txt-title">Human-in-loop</text>
+          <text x="1152" y="116" class="txt-small">No auto client communication</text>
+          <text x="1152" y="134" class="txt-small">without approval</text>
+
+          <path d="M260 103 L300 103" class="arrow"/>
+          <path d="M550 103 L590 103" class="arrow-dash"/>
+          <path d="M840 103 L880 103" class="arrow"/>
+          <path d="M1090 103 L1130 103" class="arrow"/>
+
+          <!-- input layer -->
+          <rect x="30" y="205" width="190" height="102" class="box box-green"/>
+          <text x="52" y="235" class="txt-title">Must-have Docs</text>
+          <text x="52" y="260" class="txt-small">Contract, SOW, SLA schedule</text>
+          <text x="52" y="278" class="txt-small">Weekly or monthly status</text>
+          <text x="52" y="296" class="txt-small">QBR notes, risk tracker</text>
+
+          <rect x="245" y="205" width="190" height="102" class="box box-green"/>
+          <text x="267" y="235" class="txt-title">Structured Files</text>
+          <text x="267" y="260" class="txt-small">CSV, XLSX, JSON</text>
+          <text x="267" y="278" class="txt-small">SLA metrics, actions, risks</text>
+          <text x="267" y="296" class="txt-small">Optional financial snapshot</text>
+
+          <rect x="460" y="205" width="200" height="102" class="box box-amber"/>
+          <text x="482" y="235" class="txt-title">Optional Systems</text>
+          <text x="482" y="260" class="txt-small">Jira, Azure DevOps, ServiceNow</text>
+          <text x="482" y="278" class="txt-small">CRM, finance, CSAT, timesheets</text>
+          <text x="482" y="296" class="txt-small">Used only if available</text>
+
+          <rect x="685" y="205" width="200" height="102" class="box box-amber"/>
+          <text x="707" y="235" class="txt-title">Enterprise Repos</text>
+          <text x="707" y="260" class="txt-small">SharePoint, OneDrive, Google Drive</text>
+          <text x="707" y="278" class="txt-small">CLM repository, project folders</text>
+          <text x="707" y="296" class="txt-small">Future connector path</text>
+
+          <rect x="910" y="205" width="200" height="102" class="box box-red"/>
+          <text x="932" y="235" class="txt-title">Missing Data</text>
+          <text x="932" y="260" class="txt-small">Null is not low risk</text>
+          <text x="932" y="278" class="txt-small">Unknown risk is shown clearly</text>
+          <text x="932" y="296" class="txt-small">Confidence is reduced</text>
+
+          <rect x="1135" y="205" width="195" height="102" class="box box-gray"/>
+          <text x="1157" y="235" class="txt-title">Synthetic Demo Data</text>
+          <text x="1157" y="260" class="txt-small">Fake contract, fake SLA,</text>
+          <text x="1157" y="278" class="txt-small">fake weekly update, fake QBR</text>
+          <text x="1157" y="296" class="txt-small">No real client data needed</text>
+
+          <path d="M430 146 L430 205" class="arrow"/>
+          <path d="M715 146 L715 205" class="arrow-dash"/>
+
+          <!-- ingestion layer -->
+          <rect x="30" y="375" width="210" height="102" class="box box-blue"/>
+          <text x="52" y="405" class="txt-title">Upload API</text>
+          <text x="52" y="430" class="txt-small">FastAPI or Streamlit backend</text>
+          <text x="52" y="448" class="txt-small">File metadata, project ID,</text>
+          <text x="52" y="466" class="txt-small">reporting period</text>
+
+          <rect x="265" y="375" width="210" height="102" class="box box-blue"/>
+          <text x="287" y="405" class="txt-title">Document Parsing</text>
+          <text x="287" y="430" class="txt-small">PyMuPDF, python-docx,</text>
+          <text x="287" y="448" class="txt-small">python-pptx, Pandas</text>
+          <text x="287" y="466" class="txt-small">Text + tables extracted</text>
+
+          <rect x="500" y="375" width="210" height="102" class="box box-red"/>
+          <text x="522" y="405" class="txt-title">Security Filters</text>
+          <text x="522" y="430" class="txt-small">PII detection, access policy,</text>
+          <text x="522" y="448" class="txt-small">prompt injection checks,</text>
+          <text x="522" y="466" class="txt-small">document allowlist</text>
+
+          <rect x="735" y="375" width="210" height="102" class="box box-purple"/>
+          <text x="757" y="405" class="txt-title">OpenAI File Search</text>
+          <text x="757" y="430" class="txt-small">Vector stores for uploaded files</text>
+          <text x="757" y="448" class="txt-small">Semantic + keyword retrieval</text>
+          <text x="757" y="466" class="txt-small">Evidence-grounded answers</text>
+
+          <rect x="970" y="375" width="170" height="102" class="box box-gray"/>
+          <text x="992" y="405" class="txt-title">Structured Store</text>
+          <text x="992" y="430" class="txt-small">SQLite for MVP</text>
+          <text x="992" y="448" class="txt-small">Postgres or Delta tables</text>
+          <text x="992" y="466" class="txt-small">for enterprise</text>
+
+          <rect x="1165" y="375" width="165" height="102" class="box box-gray"/>
+          <text x="1187" y="405" class="txt-title">Object Storage</text>
+          <text x="1187" y="430" class="txt-small">Local folder for MVP</text>
+          <text x="1187" y="448" class="txt-small">Azure Blob, S3, or</text>
+          <text x="1187" y="466" class="txt-small">SharePoint later</text>
+
+          <path d="M125 307 L125 375" class="arrow-blue"/>
+          <path d="M340 307 L340 375" class="arrow-blue"/>
+          <path d="M560 307 L560 375" class="arrow-dash"/>
+          <path d="M785 307 L785 375" class="arrow-dash"/>
+          <path d="M135 477 L735 535" class="arrow-blue"/>
+          <path d="M370 477 L735 535" class="arrow-blue"/>
+          <path d="M605 477 L735 535" class="arrow-blue"/>
+          <path d="M840 477 L840 535" class="arrow-blue"/>
+          <path d="M1055 477 L900 535" class="arrow"/>
+          <path d="M1245 477 L940 535" class="arrow"/>
+
+          <!-- agent layer -->
+          <rect x="30" y="560" width="235" height="145" class="box box-dark"/>
+          <text x="52" y="592" class="txt-title txt-white">OpenAI Agents SDK</text>
+          <text x="52" y="618" class="txt-small txt-white">Code-first orchestration</text>
+          <text x="52" y="636" class="txt-small txt-white">Multi-agent handoffs</text>
+          <text x="52" y="654" class="txt-small txt-white">State and approvals</text>
+          <text x="52" y="672" class="txt-small txt-white">Tracing and observability</text>
+          <text x="52" y="690" class="txt-small txt-white">Python or TypeScript</text>
+
+          <rect x="295" y="560" width="235" height="145" class="box box-purple"/>
+          <text x="317" y="592" class="txt-title">Responses API</text>
+          <text x="317" y="618" class="txt-small">Single model calls with tools</text>
+          <text x="317" y="636" class="txt-small">Good for simpler MVP flows</text>
+          <text x="317" y="654" class="txt-small">Can use File Search and</text>
+          <text x="317" y="672" class="txt-small">function tools together</text>
+
+          <rect x="560" y="560" width="250" height="145" class="box box-blue"/>
+          <text x="582" y="592" class="txt-title">Tool Calling Layer</text>
+          <text x="582" y="618" class="txt-small">compare_sla_to_contract()</text>
+          <text x="582" y="636" class="txt-small">detect_scope_creep()</text>
+          <text x="582" y="654" class="txt-small">calculate_risk_score()</text>
+          <text x="582" y="672" class="txt-small">calculate_confidence_score()</text>
+          <text x="582" y="690" class="txt-small">generate_action_plan()</text>
+
+          <rect x="840" y="560" width="250" height="145" class="box box-green"/>
+          <text x="862" y="592" class="txt-title">Specialist Agents</text>
+          <text x="862" y="618" class="txt-small">Contract Risk Agent</text>
+          <text x="862" y="636" class="txt-small">Project Status Agent</text>
+          <text x="862" y="654" class="txt-small">SLA Agent</text>
+          <text x="862" y="672" class="txt-small">Commercial + Renewal Agent</text>
+          <text x="862" y="690" class="txt-small">Missing Data + Action Agent</text>
+
+          <rect x="1120" y="560" width="210" height="145" class="box box-amber"/>
+          <text x="1142" y="592" class="txt-title">Optional Enterprise Layer</text>
+          <text x="1142" y="618" class="txt-small">ChatGPT Workspace Agent</text>
+          <text x="1142" y="636" class="txt-small">MCP / connectors</text>
+          <text x="1142" y="654" class="txt-small">AI Force alignment</text>
+          <text x="1142" y="672" class="txt-small">SharePoint, Slack, CRM,</text>
+          <text x="1142" y="690" class="txt-small">ServiceNow, Jira if available</text>
+
+          <path d="M265 632 L295 632" class="arrow-blue"/>
+          <path d="M530 632 L560 632" class="arrow-blue"/>
+          <path d="M810 632 L840 632" class="arrow-blue"/>
+          <path d="M1090 632 L1120 632" class="arrow-dash"/>
+
+          <!-- output layer -->
+          <rect x="30" y="795" width="210" height="96" class="box box-blue"/>
+          <text x="52" y="825" class="txt-title">Risk Dashboard</text>
+          <text x="52" y="850" class="txt-small">Project risk, renewal risk,</text>
+          <text x="52" y="868" class="txt-small">confidence score, risk drivers</text>
+
+          <rect x="265" y="795" width="210" height="96" class="box box-green"/>
+          <text x="287" y="825" class="txt-title">Contract Risk Report</text>
+          <text x="287" y="850" class="txt-small">SLA, penalties, scope creep,</text>
+          <text x="287" y="868" class="txt-small">payment, renewal, acceptance</text>
+
+          <rect x="500" y="795" width="210" height="96" class="box box-purple"/>
+          <text x="522" y="825" class="txt-title">QBR Brief</text>
+          <text x="522" y="850" class="txt-small">Manager-ready summary</text>
+          <text x="522" y="868" class="txt-small">for client review meetings</text>
+
+          <rect x="735" y="795" width="210" height="96" class="box box-amber"/>
+          <text x="757" y="825" class="txt-title">Action Plan</text>
+          <text x="757" y="850" class="txt-small">Owner, priority, due date,</text>
+          <text x="757" y="868" class="txt-small">reason and evidence</text>
+
+          <rect x="970" y="795" width="170" height="96" class="box box-red"/>
+          <text x="992" y="825" class="txt-title">Review Queue</text>
+          <text x="992" y="850" class="txt-small">Legal, finance,</text>
+          <text x="992" y="868" class="txt-small">commercial, delivery</text>
+
+          <rect x="1165" y="795" width="165" height="96" class="box box-gray"/>
+          <text x="1187" y="825" class="txt-title">Optional Actions</text>
+          <text x="1187" y="850" class="txt-small">Ticket, email draft,</text>
+          <text x="1187" y="868" class="txt-small">Slack or Teams post</text>
+
+          <path d="M145 705 L135 795" class="arrow-blue"/>
+          <path d="M685 705 L370 795" class="arrow-blue"/>
+          <path d="M965 705 L605 795" class="arrow-blue"/>
+          <path d="M965 705 L840 795" class="arrow-blue"/>
+          <path d="M965 705 L1055 795" class="arrow-blue"/>
+          <path d="M1225 705 L1247 795" class="arrow-dash"/>
+
+          <!-- governance -->
+          <rect x="30" y="950" width="205" height="56" class="box box-red"/>
+          <text x="52" y="975" class="txt-title">Guardrails</text>
+          <text x="52" y="994" class="txt-small">PII, prompt injection, policy checks</text>
+
+          <rect x="260" y="950" width="205" height="56" class="box box-blue"/>
+          <text x="282" y="975" class="txt-title">Citations</text>
+          <text x="282" y="994" class="txt-small">Clause and document evidence</text>
+
+          <rect x="490" y="950" width="205" height="56" class="box box-purple"/>
+          <text x="512" y="975" class="txt-title">Audit Logs</text>
+          <text x="512" y="994" class="txt-small">Traces, approvals, decisions</text>
+
+          <rect x="720" y="950" width="205" height="56" class="box box-green"/>
+          <text x="742" y="975" class="txt-title">Access Control</text>
+          <text x="742" y="994" class="txt-small">SSO, RBAC, project isolation</text>
+
+          <rect x="950" y="950" width="180" height="56" class="box box-amber"/>
+          <text x="972" y="975" class="txt-title">Cost Control</text>
+          <text x="972" y="994" class="txt-small">Caching, limits, routing</text>
+
+          <rect x="1155" y="950" width="175" height="56" class="box box-gray"/>
+          <text x="1177" y="975" class="txt-title">Deployment</text>
+          <text x="1177" y="994" class="txt-small">Cloud, private, hybrid later</text>
+        </svg>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="title-row">
+        <div>
+          <h2>2026 Tech Stack Decision</h2>
+          <p class="note">Use this in the proposal to show that the stack is current and not built on outdated assumptions.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Recommended MVP Stack</h3>
+          <table>
+            <thead>
+              <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>UI</td>
+                <td>Streamlit</td>
+                <td>Fastest for file upload, chat, tables, and demo video.</td>
+              </tr>
+              <tr>
+                <td>Backend</td>
+                <td>Python + FastAPI optional</td>
+                <td>Easy parsing, scoring, agent tools, and local demo deployment.</td>
+              </tr>
+              <tr>
+                <td>Agent orchestration</td>
+                <td>OpenAI Agents SDK</td>
+                <td>Best code-first choice for multi-agent workflows, handoffs, approvals, and state.</td>
+              </tr>
+              <tr>
+                <td>Model calls</td>
+                <td>Responses API</td>
+                <td>Good for model calls with tools, File Search, and structured outputs.</td>
+              </tr>
+              <tr>
+                <td>Knowledge retrieval</td>
+                <td>OpenAI File Search</td>
+                <td>Handles uploaded contracts, SOWs, QBR notes, and status reports with semantic and keyword search.</td>
+              </tr>
+              <tr>
+                <td>Deterministic tools</td>
+                <td>Function calling with strict schemas</td>
+                <td>Reliable scoring, SLA comparison, scope checks, and action generation.</td>
+              </tr>
+              <tr>
+                <td>Storage</td>
+                <td>Local files + SQLite</td>
+                <td>Simple for hackathon. Move to Blob, SharePoint, Postgres, or Delta later.</td>
+              </tr>
+              <tr>
+                <td>Build assistant</td>
+                <td>Codex</td>
+                <td>Useful for generating UI, parser code, tests, and refactoring fast.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h3>Enterprise Version Stack</h3>
+          <table>
+            <thead>
+              <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>UI</td>
+                <td>React + ChatKit or Workspace Agent</td>
+                <td>Better user experience, sharing, permissions, Slack, and repeatable workflows.</td>
+              </tr>
+              <tr>
+                <td>Knowledge</td>
+                <td>OpenAI File Search, Azure AI Search, or Databricks Vector Search</td>
+                <td>Depends on where HCL wants data governed and stored.</td>
+              </tr>
+              <tr>
+                <td>Connectors</td>
+                <td>MCP and enterprise app connectors</td>
+                <td>Optional Jira, ServiceNow, SharePoint, CRM, finance, and CLM integrations.</td>
+              </tr>
+              <tr>
+                <td>Data platform</td>
+                <td>Postgres, Databricks Delta, or enterprise warehouse</td>
+                <td>Needed for portfolio analytics and long-term risk tracking.</td>
+              </tr>
+              <tr>
+                <td>Governance</td>
+                <td>SSO, RBAC, audit logs, traces, guardrails</td>
+                <td>Required for contracts, client data, and manager approval workflows.</td>
+              </tr>
+              <tr>
+                <td>HCL alignment</td>
+                <td>AI Force if available</td>
+                <td>Matches HCL’s enterprise agentic AI platform direction, RAG, integrations, observability, and governance.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="pill green">MVP</span>
+          <h3 style="margin-top: 12px;">What to build first</h3>
+          <ul>
+            <li>Upload contract, SOW, status report, SLA CSV, QBR notes.</li>
+            <li>Extract obligations, risks, blockers, and SLA values.</li>
+            <li>Run risk and confidence scoring tools.</li>
+            <li>Generate contract risk report and action plan.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="pill amber">Do not overpromise</span>
+          <h3 style="margin-top: 12px;">What stays optional</h3>
+          <ul>
+            <li>Jira, ServiceNow, Azure DevOps, CRM, and finance integrations.</li>
+            <li>Automatic ticket creation or client email sending.</li>
+            <li>Legal approval or final contract interpretation.</li>
+            <li>Historical churn model unless real renewal data exists.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="pill blue">Winning angle</span>
+          <h3 style="margin-top: 12px;">Why this is strong</h3>
+          <ul>
+            <li>Works with incomplete project data.</li>
+            <li>Uses real manager workflow inputs.</li>
+            <li>Flags risks to HCL with evidence.</li>
+            <li>Turns analysis into recommended actions.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="callout">
+        <strong>Final architecture position</strong>
+        Use OpenAI Agents SDK and Responses API as the main build path. Use OpenAI File Search for uploaded project documents, function calling for deterministic checks, Codex to accelerate development, and Workspace Agents only as an optional enterprise channel. Keep Agent Builder out of the core architecture because it is not the safest 2026 foundation.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>ClientPulse AI</strong> gives HCLTech managers a practical agentic system to analyze contract risk, project health, renewal readiness, missing evidence, and next-best actions using realistic manager-uploaded project data.
+    </footer>
+  </main>
+</body>
+</html>

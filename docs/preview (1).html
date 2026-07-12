@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ClientPulse AI Clean Architecture Diagram</title>
+<style>
+  :root{
+    --ink:#222;
+    --muted:#525252;
+    --blue:#0b5cad;
+    --blue-bg:#eaf4ff;
+    --purple:#4f46e5;
+    --purple-bg:#efedff;
+    --green:#0f766e;
+    --green-bg:#e7faf5;
+    --orange:#a35400;
+    --orange-bg:#fff3df;
+    --red:#9f1d1d;
+    --red-bg:#fff0ee;
+    --gray:#777;
+    --gray-bg:#f6f5f2;
+    --line:#989898;
+  }
+  body{
+    margin:0;
+    background:#ffffff;
+    color:var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .page{
+    max-width:1280px;
+    margin:0 auto;
+    padding:28px 26px 32px;
+  }
+  h1{
+    margin:0;
+    font-size:24px;
+    line-height:1.1;
+  }
+  .subtitle{
+    margin:5px 0 18px;
+    color:#333;
+    font-size:15px;
+  }
+  .canvas{
+    width:100%;
+    overflow:auto;
+    border:1px solid #e5e5e5;
+    border-radius:12px;
+    background:#fff;
+  }
+  svg{
+    display:block;
+    width:1220px;
+    height:820px;
+    background:#fff;
+  }
+  .plane-title{
+    font-size:14px;
+    fill:#333;
+  }
+  .box{
+    stroke-width:1.2;
+    rx:8;
+  }
+  .app{fill:var(--red-bg);stroke:#d8a49e;}
+  .human{fill:var(--orange-bg);stroke:#d5ad78;}
+  .agent{fill:var(--purple-bg);stroke:#a9a1ef;}
+  .retrieval{fill:var(--blue-bg);stroke:#8db8e8;}
+  .data{fill:var(--gray-bg);stroke:#b9b9b9;}
+  .ingest{fill:#eefbe8;stroke:#9fc98a;}
+  .green{fill:var(--green-bg);stroke:#8bd2c9;}
+  .tool{fill:#f7f3ff;stroke:#b8a6ef;}
+  .govern{fill:#f9fafb;stroke:#cfcfcf;}
+  .out{fill:#f0fff9;stroke:#7cc9a8;}
+  .dashed{
+    fill:none;
+    stroke:#b7b0ee;
+    stroke-width:1.4;
+    stroke-dasharray:5 5;
+    rx:16;
+  }
+  .title{
+    font-weight:700;
+    font-size:15px;
+    fill:#242424;
+  }
+  .small{
+    font-size:12.5px;
+    fill:#333;
+  }
+  .tiny{
+    font-size:11.2px;
+    fill:#555;
+  }
+  .blue-text{fill:#0b5cad;}
+  .purple-text{fill:#4f46e5;}
+  .green-text{fill:#0f766e;}
+  .orange-text{fill:#93470a;}
+  .red-text{fill:#9f1d1d;}
+  .arrow{
+    stroke:#777;
+    stroke-width:1.5;
+    fill:none;
+    marker-end:url(#arrow);
+  }
+  .arrow-blue{
+    stroke:#0b5cad;
+    stroke-width:1.7;
+    fill:none;
+    marker-end:url(#arrowBlue);
+  }
+  .arrow-dash{
+    stroke:#888;
+    stroke-width:1.3;
+    fill:none;
+    stroke-dasharray:5 5;
+    marker-end:url(#arrow);
+  }
+  .footer{
+    margin-top:18px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:14px 16px;
+    background:#fbfaf7;
+    font-size:13px;
+    line-height:1.45;
+  }
+  .footer strong{font-weight:700;}
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:12px;
+  }
+  .pill{
+    border:1px solid #ddd;
+    border-radius:999px;
+    padding:6px 9px;
+    font-size:12px;
+    background:#fff;
+  }
+  @media print{
+    .canvas{border:none;overflow:visible;}
+    svg{width:100%;height:auto;}
+    .page{max-width:none;padding:0;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>ClientPulse AI</h1>
+  <div class="subtitle">Account, contract and project health agent with retrieval over contracts, SOWs, SLA reports and manager status updates</div>
+
+  <div class="canvas">
+  <svg viewBox="0 0 1220 820" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClientPulse AI clean architecture diagram">
+    <defs>
+      <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+        <path d="M0,0 L10,4 L0,8 Z" fill="#777"/>
+      </marker>
+      <marker id="arrowBlue" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+        <path d="M0,0 L10,4 L0,8 Z" fill="#0b5cad"/>
+      </marker>
+    </defs>
+
+    <!-- Application Plane -->
+    <text x="55" y="42" class="plane-title">Application plane</text>
+
+    <rect x="55" y="60" width="185" height="62" class="box human"/>
+    <text x="147" y="85" text-anchor="middle" class="title orange-text">Managers</text>
+    <text x="147" y="105" text-anchor="middle" class="small">Delivery, account, PMO</text>
+
+    <rect x="55" y="150" width="185" height="72" class="box app"/>
+    <text x="147" y="176" text-anchor="middle" class="title red-text">Streamlit MVP</text>
+    <text x="147" y="196" text-anchor="middle" class="small">Upload + health dashboard</text>
+    <text x="147" y="213" text-anchor="middle" class="tiny">Can become React + ChatKit</text>
+
+    <rect x="55" y="250" width="185" height="72" class="box green"/>
+    <text x="147" y="276" text-anchor="middle" class="title green-text">Workspace Agent</text>
+    <text x="147" y="296" text-anchor="middle" class="small">Optional enterprise channel</text>
+    <text x="147" y="313" text-anchor="middle" class="tiny">ChatGPT or Slack workflow</text>
+
+    <path d="M147 122 L147 150" class="arrow"/>
+    <path d="M147 222 L147 250" class="arrow-dash"/>
+
+    <!-- Agent Plane -->
+    <text x="330" y="42" class="plane-title">Agent plane, OpenAI stack</text>
+    <rect x="310" y="50" width="650" height="330" class="dashed"/>
+
+    <rect x="355" y="82" width="180" height="72" class="box agent"/>
+    <text x="445" y="108" text-anchor="middle" class="title purple-text">Orchestrator Agent</text>
+    <text x="445" y="128" text-anchor="middle" class="small">OpenAI Agents SDK</text>
+    <text x="445" y="145" text-anchor="middle" class="tiny">Handoffs, state, approvals</text>
+
+    <rect x="605" y="82" width="165" height="72" class="box green"/>
+    <text x="688" y="108" text-anchor="middle" class="title green-text">Conversations</text>
+    <text x="688" y="128" text-anchor="middle" class="small">Session state</text>
+    <text x="688" y="145" text-anchor="middle" class="tiny">Project context</text>
+
+    <rect x="815" y="82" width="110" height="72" class="box tool"/>
+    <text x="870" y="108" text-anchor="middle" class="title purple-text">Models</text>
+    <text x="870" y="128" text-anchor="middle" class="small">Reasoning model</text>
+    <text x="870" y="145" text-anchor="middle" class="tiny">Mini for extraction</text>
+
+    <rect x="355" y="205" width="180" height="72" class="box retrieval"/>
+    <text x="445" y="232" text-anchor="middle" class="title blue-text">File Search Tool</text>
+    <text x="445" y="252" text-anchor="middle" class="small">Contract + status retrieval</text>
+    <text x="445" y="269" text-anchor="middle" class="tiny">Cited source chunks</text>
+
+    <rect x="605" y="205" width="165" height="72" class="box retrieval"/>
+    <text x="688" y="232" text-anchor="middle" class="title blue-text">Vector Store</text>
+    <text x="688" y="252" text-anchor="middle" class="small">Embedded chunks</text>
+    <text x="688" y="269" text-anchor="middle" class="tiny">SOW, SLA, QBR, status</text>
+
+    <rect x="815" y="205" width="110" height="72" class="box tool"/>
+    <text x="870" y="232" text-anchor="middle" class="title purple-text">Tools</text>
+    <text x="870" y="252" text-anchor="middle" class="small">Function calls</text>
+    <text x="870" y="269" text-anchor="middle" class="tiny">Strict schemas</text>
+
+    <rect x="355" y="315" width="570" height="44" class="box tool"/>
+    <text x="640" y="342" text-anchor="middle" class="small">
+      Specialist agents: Contract Risk · Project Health · SLA · Commercial Risk · Renewal Risk · Missing Data · Action Plan
+    </text>
+
+    <path d="M240 186 L355 118" class="arrow-blue"/>
+    <path d="M535 118 L605 118" class="arrow"/>
+    <path d="M770 118 L815 118" class="arrow"/>
+    <path d="M445 154 L445 205" class="arrow"/>
+    <path d="M535 241 L605 241" class="arrow"/>
+    <path d="M770 241 L815 241" class="arrow"/>
+    <path d="M870 277 L870 315" class="arrow"/>
+    <path d="M445 277 L445 315" class="arrow"/>
+    <path d="M688 154 L688 205" class="arrow-dash"/>
+
+    <text x="502" y="185" class="tiny">query</text>
+    <text x="456" y="185" class="tiny">chunks</text>
+
+    <!-- Data Plane -->
+    <text x="55" y="430" class="plane-title">Data plane, upload-first and integration-ready</text>
+
+    <rect x="55" y="450" width="155" height="64" class="box data"/>
+    <text x="132" y="476" text-anchor="middle" class="title">Contract / SOW</text>
+    <text x="132" y="496" text-anchor="middle" class="small">Scope, terms, SLA</text>
+
+    <rect x="235" y="450" width="155" height="64" class="box data"/>
+    <text x="313" y="476" text-anchor="middle" class="title">Status Update</text>
+    <text x="313" y="496" text-anchor="middle" class="small">Weekly or monthly</text>
+
+    <rect x="415" y="450" width="155" height="64" class="box data"/>
+    <text x="493" y="476" text-anchor="middle" class="title">SLA Report</text>
+    <text x="493" y="496" text-anchor="middle" class="small">Targets vs actuals</text>
+
+    <rect x="595" y="450" width="155" height="64" class="box data"/>
+    <text x="673" y="476" text-anchor="middle" class="title">QBR Notes</text>
+    <text x="673" y="496" text-anchor="middle" class="small">Client sentiment</text>
+
+    <rect x="775" y="450" width="155" height="64" class="box data"/>
+    <text x="853" y="476" text-anchor="middle" class="title">Risk Tracker</text>
+    <text x="853" y="496" text-anchor="middle" class="small">Owners, due dates</text>
+
+    <rect x="955" y="450" width="205" height="64" class="box data"/>
+    <text x="1058" y="476" text-anchor="middle" class="title">Optional Systems</text>
+    <text x="1058" y="496" text-anchor="middle" class="small">Jira, ServiceNow, CRM, Finance</text>
+
+    <rect x="425" y="565" width="230" height="72" class="box ingest"/>
+    <text x="540" y="592" text-anchor="middle" class="title green-text">Ingestion Pipeline</text>
+    <text x="540" y="612" text-anchor="middle" class="small">Parse · chunk · embed · index</text>
+    <text x="540" y="629" text-anchor="middle" class="tiny">PyMuPDF, python-docx, python-pptx, Pandas</text>
+
+    <rect x="720" y="565" width="190" height="72" class="box retrieval"/>
+    <text x="815" y="592" text-anchor="middle" class="title blue-text">Structured Store</text>
+    <text x="815" y="612" text-anchor="middle" class="small">SQLite for MVP</text>
+    <text x="815" y="629" text-anchor="middle" class="tiny">Postgres / Delta later</text>
+
+    <path d="M132 514 C180 555, 390 548, 470 565" class="arrow"/>
+    <path d="M313 514 C350 548, 420 548, 500 565" class="arrow"/>
+    <path d="M493 514 L520 565" class="arrow"/>
+    <path d="M673 514 C640 548, 600 548, 560 565" class="arrow"/>
+    <path d="M853 514 C800 548, 670 548, 610 565" class="arrow"/>
+    <path d="M1058 514 C995 560, 950 575, 910 595" class="arrow-dash"/>
+
+    <path d="M540 565 C540 430, 688 370, 688 277" class="arrow-blue"/>
+    <text x="706" y="405" class="tiny">index to vector store</text>
+
+    <!-- Output Plane -->
+    <text x="55" y="685" class="plane-title">Output plane</text>
+
+    <rect x="55" y="705" width="175" height="64" class="box out"/>
+    <text x="143" y="731" text-anchor="middle" class="title green-text">Health Dashboard</text>
+    <text x="143" y="751" text-anchor="middle" class="small">Risk + confidence scores</text>
+
+    <rect x="255" y="705" width="175" height="64" class="box out"/>
+    <text x="343" y="731" text-anchor="middle" class="title green-text">Contract Risk Report</text>
+    <text x="343" y="751" text-anchor="middle" class="small">Risks to HCL + evidence</text>
+
+    <rect x="455" y="705" width="175" height="64" class="box out"/>
+    <text x="543" y="731" text-anchor="middle" class="title green-text">Renewal Risk</text>
+    <text x="543" y="751" text-anchor="middle" class="small">Drivers + missing data</text>
+
+    <rect x="655" y="705" width="175" height="64" class="box out"/>
+    <text x="743" y="731" text-anchor="middle" class="title green-text">Action Plan</text>
+    <text x="743" y="751" text-anchor="middle" class="small">Owner, priority, reason</text>
+
+    <rect x="855" y="705" width="175" height="64" class="box out"/>
+    <text x="943" y="731" text-anchor="middle" class="title green-text">QBR Brief</text>
+    <text x="943" y="751" text-anchor="middle" class="small">Manager-ready summary</text>
+
+    <rect x="1055" y="705" width="105" height="64" class="box app"/>
+    <text x="1108" y="731" text-anchor="middle" class="title red-text">Review</text>
+    <text x="1108" y="751" text-anchor="middle" class="small">Human approval</text>
+
+    <path d="M640 359 C640 520, 143 655, 143 705" class="arrow-blue"/>
+    <path d="M640 359 C620 520, 343 650, 343 705" class="arrow-blue"/>
+    <path d="M640 359 C620 510, 543 650, 543 705" class="arrow-blue"/>
+    <path d="M640 359 C680 520, 743 650, 743 705" class="arrow-blue"/>
+    <path d="M640 359 C740 520, 943 650, 943 705" class="arrow-blue"/>
+    <path d="M1030 737 L1055 737" class="arrow"/>
+
+    <!-- governance bar -->
+    <rect x="55" y="785" width="1105" height="22" class="box govern"/>
+    <text x="608" y="801" text-anchor="middle" class="tiny">
+      Governance: SSO + RBAC · source citations · audit logs · tracing · guardrails · PII controls · no final legal advice · human approval before action
+    </text>
+  </svg>
+  </div>
+
+  <div class="footer">
+    <strong>Tech stack note:</strong>
+    MVP uses Streamlit, Python, OpenAI Agents SDK, Responses API, File Search, vector store, function calling, and local SQLite/files.
+    Enterprise version can add React + ChatKit, ChatGPT Workspace Agents, MCP connectors, SharePoint, Jira, ServiceNow, CRM, CLM, finance systems, Postgres or Databricks Delta.
+    Keep OpenAI Agent Builder out of the core architecture because OpenAI is deprecating it, while ChatKit remains available.
+    <div class="legend">
+      <span class="pill">Primary data: uploaded docs</span>
+      <span class="pill">Optional integrations: only if available</span>
+      <span class="pill">Core output: risk + confidence + action</span>
+      <span class="pill">Human review required</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
