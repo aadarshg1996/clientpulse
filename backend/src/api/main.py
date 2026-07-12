@@ -11,8 +11,19 @@ from .routes import router
 
 
 def _cors_origins() -> list[str]:
+    # CORS_ORIGINS is comma-separated. When wired from a Render `fromService`
+    # host it arrives without a scheme (e.g. "app.onrender.com"); CORS needs a
+    # full origin, so default bare hosts to https://.
     raw = os.getenv("CORS_ORIGINS", "http://localhost:5173")
-    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+    origins: list[str] = []
+    for part in raw.split(","):
+        origin = part.strip().rstrip("/")
+        if not origin:
+            continue
+        if not origin.startswith(("http://", "https://")):
+            origin = f"https://{origin}"
+        origins.append(origin)
+    return origins
 
 
 def create_app() -> FastAPI:

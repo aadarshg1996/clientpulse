@@ -1,6 +1,15 @@
 // Typed client for the ClientPulse read API. Types mirror src/api/schemas.py.
 
-const BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000"
+// Resolve API base. VITE_API_URL is inlined at build time. When wired from a
+// Render `fromService` host it arrives without a scheme (e.g. "api.onrender.com"),
+// so default to https:// in that case. Trailing slash trimmed to avoid "//" joins.
+function resolveApiBase(): string {
+  const raw = import.meta.env.VITE_API_URL ?? "http://localhost:8000"
+  const withScheme = /^https?:\/\//.test(raw) ? raw : `https://${raw}`
+  return withScheme.replace(/\/+$/, "")
+}
+
+const BASE = resolveApiBase()
 
 export type Status = "healthy" | "watch" | "risk" | "critical"
 
